@@ -41,7 +41,7 @@ def get_argparser():
 
 class TxtParser:
     def __init__(self, no_spaces):
-        self.regex_search_spaces = f"\\G\\s{ {no_spaces} }"
+        self.regex_search_spaces = f"\\G\\ { {no_spaces} }"
         self.regex_search_tabs = r"\G\t"
         self.regex_replacement_spaces = " " * no_spaces
         self.regex_replacement_tabs = "\t"
