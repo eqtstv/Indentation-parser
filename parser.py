@@ -41,7 +41,10 @@ def get_argparser():
 
 class TxtParser:
     def __init__(self, no_spaces):
-        self.no_spaces = no_spaces
+        self.regex_search_spaces = f"\\G\\s{ {no_spaces} }"
+        self.regex_search_tabs = r"\G\t"
+        self.regex_replacement_spaces = " " * no_spaces
+        self.regex_replacement_tabs = "\t"
 
     def get_filename(self, filename, replace):
         self.filename = filename
@@ -55,38 +58,33 @@ class TxtParser:
 
     def convert_tabs_to_spaces(self):
         fout = open("output.txt", "w")
-        regex_search_term = r"\G\t"
-        regex_replacement = " " * self.no_spaces
 
         with open(self.filename, "r") as fin:
             for line in fin:
-                text_after = re.sub(regex_search_term, regex_replacement, line)
+                text_after = re.sub(
+                    self.regex_search_tabs, self.regex_replacement_spaces, line
+                )
                 fout.write(text_after)
         fout.close()
 
     def convert_spaces_to_tabs(self):
         fout = open("output.txt", "w")
-        regex_search_term = f"\\G\\s{ {self.no_spaces} }"
-        regex_replacement = "\t"
 
         with open(self.filename, "r") as fin:
             for line in fin:
-                text_after = re.sub(regex_search_term, regex_replacement, line)
+                text_after = re.sub(
+                    self.regex_search_spaces, self.regex_replacement_tabs, line
+                )
                 fout.write(text_after)
         fout.close()
 
     def check_main_indentation_type(self):
         spaces, tabs = [], []
-        fout = open("output.txt", "w")
-
-        regex_search_term = f"\\G\\s{ {4} }"
-        regex_search_term2 = r"\G\t"
 
         with open(self.filename, "r") as fin:
             for line in fin:
-                spaces.append(re.search(regex_search_term, line))
-                tabs.append(re.search(regex_search_term2, line))
-        fout.close()
+                spaces.append(re.search(self.regex_search_spaces, line))
+                tabs.append(re.search(self.regex_search_tabs, line))
 
         count_dict = {
             "tabs": len(list(filter(None, tabs))),

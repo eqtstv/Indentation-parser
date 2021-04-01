@@ -16,7 +16,7 @@ if num > 1:
 			# if factor is        found, set flag to True
                 flag =				True
               # break out of loop
-            break
+							break
 
 # check if flag is True
 if flag:
