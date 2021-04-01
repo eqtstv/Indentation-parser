@@ -1,4 +1,7 @@
 import argparse
+import glob
+import os
+
 import regex as re
 
 
@@ -43,40 +46,51 @@ class TxtParser:
     def __init__(self, no_spaces):
         self.regex_search_spaces = f"\\G\\ { {no_spaces} }"
         self.regex_search_tabs = r"\G\t"
-        self.regex_replacement_spaces = " " * no_spaces
-        self.regex_replacement_tabs = "\t"
+        self.regex_substitute_spaces = " " * no_spaces
+        self.regex_substitute_tabs = "\t"
 
-    def get_filename(self, filename, replace):
+    def get_filename(self, filename):
         self.filename = filename
-        self.replace = replace
 
-    def convert_file(self, from_indent):
+    def get_parsed_filename(self):
+        filenames_list = glob.glob(f"{self.filename[:-4]}_parsed_*.txt")
+        filenames_nums_list = [
+            int(os.path.splitext(val)[0].split("_")[-1]) for val in filenames_list
+        ]
+
+        if not filenames_list:
+            return f"{self.filename[:-4]}_parsed_0.txt"
+
+        else:
+            new_num = max(filenames_nums_list) + 1
+            return f"{self.filename[:-4]}_parsed_{new_num}.txt"
+
+    def convert_file_from(self, from_indent, replace):
         if from_indent == "tabs":
-            self.convert_tabs_to_spaces()
+            self.convert_file(
+                self.regex_search_spaces, self.regex_substitute_tabs, replace
+            )
         elif from_indent == "spaces":
-            self.convert_spaces_to_tabs()
+            self.convert_file(
+                self.regex_search_tabs, self.regex_substitute_spaces, replace
+            )
 
-    def convert_tabs_to_spaces(self):
-        fout = open("output.txt", "w")
-
-        with open(self.filename, "r") as fin:
-            for line in fin:
-                text_after = re.sub(
-                    self.regex_search_tabs, self.regex_replacement_spaces, line
-                )
-                fout.write(text_after)
-        fout.close()
-
-    def convert_spaces_to_tabs(self):
-        fout = open("output.txt", "w")
-
-        with open(self.filename, "r") as fin:
-            for line in fin:
-                text_after = re.sub(
-                    self.regex_search_spaces, self.regex_replacement_tabs, line
-                )
-                fout.write(text_after)
-        fout.close()
+    def convert_file(self, search, substitute, replace):
+        if replace:
+            with open("temp.txt", "w") as outfile, open(self.filename, "r") as infile:
+                for line in infile:
+                    text_after = re.sub(search, substitute, line)
+                    outfile.write(text_after)
+            os.remove(self.filename)
+            os.rename("temp.txt", self.filename)
+        else:
+            parsed_filename = self.get_parsed_filename()
+            with open(parsed_filename, "w+") as outfile, open(
+                self.filename, "r"
+            ) as infile:
+                for line in infile:
+                    text_after = re.sub(search, substitute, line)
+                    outfile.write(text_after)
 
     def check_main_indentation_type(self):
         spaces, tabs = [], []
@@ -94,17 +108,16 @@ class TxtParser:
         print(
             f"File has:\n    lines indented with tabs: {count_dict['tabs']}\
                 \n    lines indented with spaces: {count_dict['spaces']}\
-                \n\nFile has mainly {max(count_dict, key=count_dict.get)} as indentation"
+                \n\nThe file has mainly {max(count_dict, key=count_dict.get)} as indentation"
         )
 
 
 if __name__ == "__main__":
     args = get_argparser()
     txt_parser = TxtParser(args["tab_chars"])
-    txt_parser.get_filename(args["filename"], args["replace"])
+    txt_parser.get_filename(args["filename"])
 
     if not args["from"]:
         txt_parser.check_main_indentation_type()
-
     else:
-        txt_parser.convert_file(args["from"])
+        txt_parser.convert_file_from(args["from"], args["replace"])
