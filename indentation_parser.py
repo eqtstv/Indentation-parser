@@ -86,6 +86,8 @@ class TxtParser:
                     outfile.write(text_after)
             os.remove(self.filename)
             os.rename("temp.txt", self.filename)
+            return f"\nRows modified: {len(list(filter(None, rows_modified)))}\
+                \nParsed file inplace"
         else:
             parsed_filename = self.get_parsed_filename(self.get_filenames_nums())
             with open(parsed_filename, "w+") as outfile, open(
@@ -96,7 +98,8 @@ class TxtParser:
                     text_after = re.sub(search, substitute, line)
                     outfile.write(text_after)
 
-        return f"\nRows modified: {len(list(filter(None, rows_modified)))}"
+            return f"\nRows modified: {len(list(filter(None, rows_modified)))}\
+                \nCreated file: {parsed_filename}"
 
     def check_main_indentation_type(self):
         spaces, tabs = [], []
