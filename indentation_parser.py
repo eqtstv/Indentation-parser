@@ -86,6 +86,7 @@ class TxtParser:
                     outfile.write(text_after)
             os.remove(self.filename)
             os.rename("temp.txt", self.filename)
+
             return f"\nRows modified: {len(list(filter(None, rows_modified)))}\
                 \nParsed file inplace"
         else:
