@@ -106,8 +106,8 @@ class TxtParser:
         }
 
         print(
-            f"File has:\n    lines indented with tabs: {count_dict['tabs']}\
-                \n    lines indented with spaces: {count_dict['spaces']}\
+            f"File has:\n    rows indented with tabs: {count_dict['tabs']}\
+                \n    rows indented with spaces: {count_dict['spaces']}\
                 \n\nThe file has mainly {max(count_dict, key=count_dict.get)} as indentation"
         )
 
