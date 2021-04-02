@@ -68,11 +68,11 @@ class TxtParser:
 
     def convert_file_from(self, from_indent, replace):
         if from_indent == "tabs":
-            self.convert_file(
+            return self.convert_file(
                 self.regex_search_tabs, self.regex_substitute_spaces, replace
             )
         elif from_indent == "spaces":
-            self.convert_file(
+            return self.convert_file(
                 self.regex_search_spaces, self.regex_substitute_tabs, replace
             )
 
@@ -96,7 +96,7 @@ class TxtParser:
                     text_after = re.sub(search, substitute, line)
                     outfile.write(text_after)
 
-        print(f"\nRows modified: {len(list(filter(None, rows_modified)))}")
+        return f"\nRows modified: {len(list(filter(None, rows_modified)))}"
 
     def check_main_indentation_type(self):
         spaces, tabs = [], []
@@ -111,21 +111,19 @@ class TxtParser:
             "spaces": len(list(filter(None, spaces))),
         }
 
-        print(
-            f"File has:\n    rows indented with tabs: {count_dict['tabs']}\
+        return f"File has:\n    rows indented with tabs: {count_dict['tabs']}\
                 \n    rows indented with spaces: {count_dict['spaces']}\
                 \n\nThe file has mainly {max(count_dict, key=count_dict.get)} as indentation"
-        )
 
 
-def parse_txt_file(filename, from_indent, replace=False, tab_chars=4):
+def parse_txt_file(filename, from_indent=None, replace=False, tab_chars=4):
     txt_parser = TxtParser(tab_chars)
     txt_parser.get_filename(filename)
 
     if not from_indent:
-        txt_parser.check_main_indentation_type()
+        return txt_parser.check_main_indentation_type()
     else:
-        txt_parser.convert_file_from(from_indent, replace)
+        return txt_parser.convert_file_from(from_indent, replace)
 
 
 if __name__ == "__main__":
@@ -134,6 +132,6 @@ if __name__ == "__main__":
     txt_parser.get_filename(args["filename"])
 
     if not args["from"]:
-        txt_parser.check_main_indentation_type()
+        print(txt_parser.check_main_indentation_type())
     else:
-        txt_parser.convert_file_from(args["from"], args["replace"])
+        print(txt_parser.convert_file_from(args["from"], args["replace"]))
