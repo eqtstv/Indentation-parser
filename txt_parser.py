@@ -43,7 +43,7 @@ def get_argparser():
 
 
 class TxtParser:
-    def __init__(self, no_spaces):
+    def __init__(self, no_spaces=4):
         self.regex_search_spaces = f"\\G\\ { {no_spaces} }"
         self.regex_search_tabs = r"\G\t"
         self.regex_substitute_spaces = " " * no_spaces
@@ -52,15 +52,16 @@ class TxtParser:
     def get_filename(self, filename):
         self.filename = filename
 
-    def get_parsed_filename(self):
+    def get_filenames_nums(self):
         filenames_list = glob.glob(f"{self.filename[:-4]}_parsed_*.txt")
         filenames_nums_list = [
             int(os.path.splitext(val)[0].split("_")[-1]) for val in filenames_list
         ]
+        return filenames_nums_list
 
-        if not filenames_list:
+    def get_parsed_filename(self, filenames_nums_list):
+        if not filenames_nums_list:
             return f"{self.filename[:-4]}_parsed_0.txt"
-
         else:
             new_num = max(filenames_nums_list) + 1
             return f"{self.filename[:-4]}_parsed_{new_num}.txt"
@@ -86,7 +87,7 @@ class TxtParser:
             os.remove(self.filename)
             os.rename("temp.txt", self.filename)
         else:
-            parsed_filename = self.get_parsed_filename()
+            parsed_filename = self.get_parsed_filename(self.get_filenames_nums())
             with open(parsed_filename, "w+") as outfile, open(
                 self.filename, "r"
             ) as infile:
