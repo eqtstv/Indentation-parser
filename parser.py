@@ -68,17 +68,19 @@ class TxtParser:
     def convert_file_from(self, from_indent, replace):
         if from_indent == "tabs":
             self.convert_file(
-                self.regex_search_spaces, self.regex_substitute_tabs, replace
+                self.regex_search_tabs, self.regex_substitute_spaces, replace
             )
         elif from_indent == "spaces":
             self.convert_file(
-                self.regex_search_tabs, self.regex_substitute_spaces, replace
+                self.regex_search_spaces, self.regex_substitute_tabs, replace
             )
 
     def convert_file(self, search, substitute, replace):
+        rows_modified = []
         if replace:
             with open("temp.txt", "w") as outfile, open(self.filename, "r") as infile:
                 for line in infile:
+                    rows_modified.append(re.match(search, line))
                     text_after = re.sub(search, substitute, line)
                     outfile.write(text_after)
             os.remove(self.filename)
@@ -89,8 +91,11 @@ class TxtParser:
                 self.filename, "r"
             ) as infile:
                 for line in infile:
+                    rows_modified.append(re.match(search, line))
                     text_after = re.sub(search, substitute, line)
                     outfile.write(text_after)
+
+        print(f"\nRows modified: {len(list(filter(None, rows_modified)))}")
 
     def check_main_indentation_type(self):
         spaces, tabs = [], []
