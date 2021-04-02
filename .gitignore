@@ -1,3 +1,4 @@
 output.txt
 __pycache__/
 .pytest_cache
+is_prime_parsed*
