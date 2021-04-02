@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch
-from txt_parser import TxtParser
+from indentation_parser import TxtParser
 import os
 import glob
 
