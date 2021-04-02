@@ -1,8 +1,7 @@
-import unittest
-from unittest.mock import patch
-from indentation_parser import TxtParser
 import os
-import glob
+import unittest
+
+from indentation_parser import TxtParser
 
 
 class TestTxtParser(unittest.TestCase):
@@ -63,7 +62,7 @@ class TestTxtParser(unittest.TestCase):
         filename = "this_is_a_test_filename_for_filename_nums.txt"
         txt_parser.get_filename(filename)
 
-        with open(filename, "w") as f:
+        with open(filename, "w"):
             pass
 
         # WHEN get_filename_nums() method is ran on TxtParser
@@ -81,7 +80,7 @@ class TestTxtParser(unittest.TestCase):
         txt_parser.get_filename(filename)
 
         for i in range(5):
-            with open(f"{filename[:-4]}_parsed_{i}.txt", "w") as f:
+            with open(f"{filename[:-4]}_parsed_{i}.txt", "w"):
                 pass
 
         # WHEN get_filename_nums() method is ran on TxtParser
