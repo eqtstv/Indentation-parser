@@ -124,7 +124,7 @@ class TestParseTxtFile(unittest.TestCase):
         result = parse_txt_file("is_prime.txt")
         self.assertEqual(
             result,
-            f"File has:\n    rows indented with tabs: 2\
+            "File has:\n    rows indented with tabs: 2\
                 \n    rows indented with spaces: 7\
                 \n\nThe file has mainly spaces as indentation",
         )
